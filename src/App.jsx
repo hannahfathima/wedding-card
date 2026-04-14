@@ -5,7 +5,13 @@ import Admin from './components/Admin';
 
 function App() {
   return (
-    <Router>
+    <Router 
+      basename="/wedding-card"
+      future={{ 
+        v7_startTransition: true, 
+        v7_relativeSplatPath: true 
+      }}
+    >
       <Routes>
         <Route path="/" element={<Invitation />} />
         <Route path="/admin" element={<Admin />} />
