@@ -89,8 +89,8 @@ const RSVPForm = ({ onCancel }) => {
             </div>
           )}
         </div>
-        <h2 className="text-3xl font-serif italic mb-2">
-          {attending ? 'JazakAllah Khair' : 'Thank You'}
+        <h2 className={`text-3xl mb-2 ${attending ? 'font-arabic text-pinterest-gold' : 'font-serif italic text-pinterest-charcoal'}`}>
+          {attending ? 'جزاك اللهُ خيراً' : 'Thank You'}
         </h2>
         <p className="text-gray-500 font-serif italic">
           {attending 
@@ -117,7 +117,7 @@ const RSVPForm = ({ onCancel }) => {
   return (
     <div className="space-y-8 min-h-[300px] flex flex-col justify-center">
       <AnimatePresence mode="wait">
-        {attending === null ? (
+        {!attending && attending !== false ? (
           <motion.div 
             key="choice"
             initial={{ opacity: 0, x: -20 }}
@@ -125,15 +125,15 @@ const RSVPForm = ({ onCancel }) => {
             exit={{ opacity: 0, x: 20 }}
             className="space-y-6"
           >
-            <div className="space-y-4">
-              <h3 className="font-serif italic text-2xl text-pinterest-charcoal">Will you join us?</h3>
+            <div className="space-y-4 text-center">
+              <h3 className="font-arabic text-2xl text-pinterest-gold">هل ستشرفنا؟</h3>
               <p className="text-xs uppercase tracking-[0.2em] text-gray-400">Please enter your name</p>
               <input 
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Full Name"
-                className="input-field"
+                className="input-field text-center"
                 required
               />
             </div>
@@ -150,7 +150,7 @@ const RSVPForm = ({ onCancel }) => {
               <button
                 disabled={!name.trim()}
                 onClick={() => setAttending(false)}
-                className="w-full py-5 rounded-2xl bg-white border border-gray-200 text-gray-500 font-semibold hover:bg-gray-50 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-5 rounded-2xl bg-white border border-gray-200 text-gray-400 font-semibold hover:bg-gray-50 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <XCircle className="w-5 h-5" />
                 Sorry, I am not coming
@@ -158,64 +158,75 @@ const RSVPForm = ({ onCancel }) => {
             </div>
             <button onClick={onCancel} className="text-xs uppercase tracking-widest text-gray-300 hover:text-pinterest-charcoal transition-colors">Go Back</button>
           </motion.div>
-        ) : attending === true ? (
+        ) : (
           <motion.div 
-            key="coming"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-8"
+            key="confirmed"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="space-y-6"
           >
-            <div className="space-y-4">
-              <p className="text-xs uppercase tracking-[0.3em] font-bold text-gray-400">Number of Guests</p>
-              <div className="flex items-center justify-center gap-8">
-                <button 
-                  onClick={() => setPeople(Math.max(1, people - 1))}
-                  className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-pinterest-charcoal hover:border-pinterest-charcoal transition-all"
-                >
-                  <Minus className="w-5 h-5" />
-                </button>
-                <span className="text-5xl font-serif italic w-12">{people}</span>
-                <button 
-                  onClick={() => setPeople(Math.min(10, people + 1))}
-                  className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-pinterest-charcoal hover:border-pinterest-charcoal transition-all"
-                >
-                  <Plus className="w-5 h-5" />
-                </button>
-              </div>
+            <div className="text-center space-y-2">
+              <p className="font-serif italic text-lg text-pinterest-gold">
+                {name}, {attending ? "we're so happy you're coming!" : "we'll miss you!"}
+              </p>
+              <button 
+                onClick={() => {setAttending(null); setPeople(1)}} 
+                className="text-[10px] uppercase tracking-widest text-gray-400 hover:text-pinterest-gold underline underline-offset-4"
+              >
+                Change choice
+              </button>
             </div>
+
+            {attending && (
+              <div className="bg-pinterest-cream/50 rounded-3xl p-6 space-y-4 border border-pinterest-gold/10">
+                <p className="text-xs uppercase tracking-[0.2em] font-bold text-pinterest-gold text-center">How many guests?</p>
+                <div className="flex items-center justify-center gap-8">
+                  <button 
+                    onClick={() => setPeople(Math.max(1, people - 1))}
+                    className="w-10 h-10 rounded-full bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-pinterest-charcoal transition-all shadow-sm"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <div className="flex flex-col items-center">
+                    <span className="text-5xl font-serif italic text-pinterest-charcoal leading-none">
+                      {people}
+                    </span>
+                    <span className="text-[10px] uppercase text-gray-400 mt-2">Person{people > 1 ? 's' : ''}</span>
+                  </div>
+                  <button 
+                    onClick={() => setPeople(Math.min(10, people + 1))}
+                    className="w-10 h-10 rounded-full bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-pinterest-charcoal transition-all shadow-sm"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+                <p className="text-[10px] text-gray-400 italic text-center">Click + or - to adjust</p>
+              </div>
+            )}
 
             <div className="flex flex-col gap-4">
               <button
                 disabled={loading}
                 onClick={handleSubmit}
-                className="w-full py-5 rounded-2xl bg-pinterest-charcoal text-white font-semibold shadow-premium hover:bg-black transition-all flex items-center justify-center gap-3"
+                className={`w-full py-5 rounded-2xl font-semibold shadow-premium transition-all flex items-center justify-center gap-3 ${
+                  attending ? 'bg-pinterest-charcoal text-white hover:bg-black' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50'
+                }`}
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Heart className="w-5 h-5 fill-current" />}
-                Confirm Presence
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : attending ? (
+                  <>
+                    <Heart className="w-5 h-5 fill-current" />
+                    Confirm Presence
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="w-5 h-5" />
+                    Confirm Regrets
+                  </>
+                )}
               </button>
-              <button onClick={() => setAttending(null)} className="text-xs uppercase tracking-widest text-gray-300 hover:text-pinterest-charcoal transition-colors">Back to choice</button>
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div 
-            key="not-coming"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
-          >
-            <div className="py-8">
-              <p className="font-serif italic text-xl text-gray-400">We'll miss you at the ceremony.</p>
-            </div>
-            <div className="flex flex-col gap-4">
-              <button
-                disabled={loading}
-                onClick={handleSubmit}
-                className="w-full py-5 rounded-2xl bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition-all flex items-center justify-center gap-3"
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm regrets'}
-              </button>
-              <button onClick={() => setAttending(null)} className="text-xs uppercase tracking-widest text-gray-300 hover:text-pinterest-charcoal transition-colors">Back to choice</button>
+              <button onClick={onCancel} className="text-xs uppercase tracking-widest text-gray-300 hover:text-pinterest-charcoal transition-colors">Cancel</button>
             </div>
           </motion.div>
         )}

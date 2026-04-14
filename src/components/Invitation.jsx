@@ -63,9 +63,8 @@ const Invitation = () => {
           <p className="font-serif italic text-gray-500">With the blessings of Allah (SWT)</p>
         </header>
 
-        {/* Names */}
-        <div className="space-y-2">
-          <h1 className="text-5xl md:text-6xl font-serif italic text-pinterest-charcoal">
+        <div className="space-y-2 overflow-hidden px-4">
+          <h1 className="text-[35px] font-serif italic text-pinterest-charcoal whitespace-nowrap">
             Rishad & Hanna
           </h1>
           <p className="text-lg text-pinterest-gold font-serif italic opacity-80">
@@ -77,25 +76,32 @@ const Invitation = () => {
         <CountdownTimer targetDate="April 27, 2026 12:00:00" />
 
         {/* Details Grid - Compact */}
-        <div className="flex flex-col items-center gap-4 py-8 border-y border-pinterest-gold/5 max-w-sm mx-auto w-full">
-          <div className="flex items-center gap-4 group">
-            <div className="w-10 h-10 rounded-full bg-pinterest-sand flex items-center justify-center text-pinterest-gold shrink-0 group-hover:scale-110 transition-transform">
-              <Calendar className="w-5 h-5" />
+        <div className="flex flex-col items-center gap-2 py-8 border-y border-pinterest-gold/5 max-w-sm mx-auto w-full">
+          <div className="w-fit">
+            <div className="flex items-center gap-4 group py-2">
+              <div className="w-10 h-10 rounded-full bg-pinterest-sand flex items-center justify-center text-pinterest-gold shrink-0 group-hover:scale-110 transition-transform">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold">Saturday, April 27, 2026</p>
+                <p className="text-xs text-gray-400">12:00 PM onwards</p>
+              </div>
             </div>
-            <div className="text-left">
-              <p className="text-sm font-semibold">Saturday, April 27, 2026</p>
-              <p className="text-xs text-gray-400">12:00 PM onwards</p>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-4 group">
-            <div className="w-10 h-10 rounded-full bg-pinterest-sand flex items-center justify-center text-pinterest-gold shrink-0 group-hover:scale-110 transition-transform">
-              <MapPin className="w-5 h-5" />
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-semibold">Swagath auditorium</p>
-              <p className="text-xs text-gray-400">Karinkallathani</p>
-            </div>
+            <a 
+              href="https://maps.app.goo.gl/qoSaHfnXno5AS8Et5" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 group hover:bg-white/50 p-2 -m-2 rounded-2xl transition-all cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-full bg-pinterest-sand flex items-center justify-center text-pinterest-gold shrink-0 group-hover:scale-110 transition-transform">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold">Swagath auditorium</p>
+                <p className="text-xs text-gray-400">Karinkallathani</p>
+              </div>
+            </a>
           </div>
         </div>
 
