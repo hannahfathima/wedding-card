@@ -71,13 +71,16 @@ const Admin = () => {
   );
 
   const totalPeople = rsvps.reduce((sum, item) => sum + (item.attending ? (item.people || 0) : 0), 0);
+  const totalHanna = rsvps.reduce((sum, item) => sum + (item.attending && item.side === 'hanna' ? (item.people || 0) : 0), 0);
+  const totalRishad = rsvps.reduce((sum, item) => sum + (item.attending && item.side === 'rishad' ? (item.people || 0) : 0), 0);
+  
   const totalResponses = rsvps.length;
   const totalAttending = rsvps.filter(r => r.attending).length;
   const totalRegrets = rsvps.length - totalAttending;
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-pinterest-cream flex items-center justify-center p-6">
+      <div className="min-h-screen bg-pinterest-cream flex items-center justify-center p-6 text-pinterest-charcoal">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -100,7 +103,7 @@ const Admin = () => {
               />
             </div>
             {error && <p className="text-red-500 text-xs mb-6 text-center animate-bounce">{error}</p>}
-            <button type="submit" className="btn-primary w-full">Enter Dashboard</button>
+            <button type="submit" className="btn-primary w-full tracking-widest uppercase text-xs py-4">Enter Dashboard</button>
           </form>
         </motion.div>
       </div>
@@ -108,11 +111,11 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-pinterest-cream text-pinterest-charcoal p-6 md:p-12">
+    <div className="min-h-screen bg-pinterest-cream text-pinterest-charcoal p-6 md:p-12 uppercase transition-all duration-500">
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
           <div>
-            <h1 className="text-4xl font-serif italic mb-2">Guest Overview</h1>
+            <h1 className="text-4xl font-serif italic mb-2 normal-case">Guest Overview</h1>
             <p className="text-gray-400 text-sm tracking-wide uppercase">Rishad & Hanna Wedding</p>
           </div>
           <div className="flex items-center gap-4">
@@ -150,12 +153,12 @@ const Admin = () => {
             whileHover={{ y: -4 }}
             className="pinterest-card flex items-center gap-4 !p-6"
           >
-            <div className="p-3 bg-pinterest-sage/10 rounded-xl">
-              <Users className="text-pinterest-sage w-6 h-6" />
+            <div className="p-3 bg-pinterest-gold/5 rounded-xl">
+              <Users className="text-pinterest-gold w-6 h-6" />
             </div>
             <div>
-              <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Guests Coming</p>
-              <h2 className="text-3xl font-serif italic">{loading ? '...' : totalPeople}</h2>
+              <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Hanna's Side</p>
+              <h2 className="text-3xl font-serif italic text-pinterest-gold">{loading ? '...' : totalHanna}</h2>
             </div>
           </motion.div>
 
@@ -163,12 +166,12 @@ const Admin = () => {
             whileHover={{ y: -4 }}
             className="pinterest-card flex items-center gap-4 !p-6"
           >
-            <div className="p-3 bg-pinterest-gold/10 rounded-xl">
-              <ClipboardList className="text-pinterest-gold w-6 h-6" />
+            <div className="p-3 bg-slate-100 rounded-xl">
+              <Users className="text-slate-500 w-6 h-6" />
             </div>
             <div>
-              <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Total Responses</p>
-              <h2 className="text-3xl font-serif italic">{loading ? '...' : totalResponses}</h2>
+              <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Rishad's Side</p>
+              <h2 className="text-3xl font-serif italic text-slate-600">{loading ? '...' : totalRishad}</h2>
             </div>
           </motion.div>
 
@@ -180,8 +183,8 @@ const Admin = () => {
               <CheckCircle className="text-green-500 w-6 h-6" />
             </div>
             <div>
-              <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Coming</p>
-              <h2 className="text-3xl font-serif italic">{loading ? '...' : totalAttending}</h2>
+              <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Total Coming</p>
+              <h2 className="text-3xl font-serif italic text-green-600">{loading ? '...' : totalPeople}</h2>
             </div>
           </motion.div>
 
@@ -208,13 +211,16 @@ const Admin = () => {
                 <input 
                   type="text"
                   placeholder="Search guests..."
-                  className="bg-gray-50 border-none rounded-full pl-12 pr-6 py-3 w-full text-sm focus:ring-2 focus:ring-pinterest-gold/10"
+                  className="bg-gray-50 border-none rounded-full pl-12 pr-6 py-3 w-full text-sm focus:ring-2 focus:ring-pinterest-gold/10 normal-case"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <div className="ml-auto flex gap-2">
-                <span className="text-xs text-gray-400 italic">Auto-refreshing live data</span>
+              <div className="ml-auto flex gap-6 text-right">
+                <div>
+                  <p className="text-[8px] uppercase tracking-widest text-gray-400">Response Rate</p>
+                  <p className="text-xl font-serif italic">{totalResponses ? Math.round((totalAttending/totalResponses)*100) : 0}%</p>
+                </div>
               </div>
             </div>
 
@@ -225,17 +231,31 @@ const Admin = () => {
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-100 text-[10px] uppercase tracking-widest font-bold text-gray-400">
                       <th className="px-8 py-5 text-left">Guest Name</th>
+                      <th className="px-8 py-5 text-center">Side</th>
                       <th className="px-8 py-5 text-center">Status</th>
-                      <th className="px-8 py-5 text-center">Group Size</th>
-                      <th className="px-8 py-5 text-right">Time Received</th>
+                      <th className="px-8 py-5 text-center">Guests</th>
+                      <th className="px-8 py-5 text-right">Received</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {filteredRsvps.map((rsvp) => (
                       <tr key={rsvp.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="px-8 py-6">
-                          <p className="font-serif text-lg">{rsvp.name}</p>
+                          <p className="font-serif text-lg normal-case">{rsvp.name}</p>
                           {rsvp.source && <p className="text-[8px] text-gray-300 uppercase tracking-tighter">{rsvp.source}</p>}
+                        </td>
+                        <td className="px-8 py-6 text-center">
+                          {rsvp.side ? (
+                            <span className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest ${
+                              rsvp.side === 'hanna' 
+                              ? 'bg-pinterest-gold/10 text-pinterest-gold' 
+                              : 'bg-slate-100 text-slate-500'
+                            }`}>
+                              {rsvp.side === 'hanna' ? 'Hanna' : 'Rishad'}
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-gray-300 italic uppercase">Legacy</span>
+                          )}
                         </td>
                         <td className="px-8 py-6 text-center">
                           <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
@@ -243,7 +263,7 @@ const Admin = () => {
                             ? 'bg-green-50 text-green-600 border-green-100' 
                             : 'bg-gray-50 text-gray-400 border-gray-100'
                           }`}>
-                            {rsvp.attending ? 'Attending' : 'Regret'}
+                            {rsvp.attending ? 'Coming' : 'Regret'}
                           </span>
                         </td>
                         <td className="px-8 py-6 text-center">
@@ -266,7 +286,7 @@ const Admin = () => {
                     ))}
                     {!loading && filteredRsvps.length === 0 && (
                       <tr>
-                        <td colSpan="4" className="px-8 py-20 text-center text-gray-400 italic font-serif">
+                        <td colSpan="5" className="px-8 py-20 text-center text-gray-400 italic font-serif normal-case">
                           No matching records found.
                         </td>
                       </tr>
@@ -280,7 +300,7 @@ const Admin = () => {
           <div className="space-y-6">
             <div className="pinterest-card !p-0 overflow-hidden bg-white border border-red-50">
               <div className="p-6 border-b border-gray-50">
-                <h3 className="text-lg font-serif italic text-red-900 flex items-center gap-2">
+                <h3 className="text-lg font-serif italic text-red-900 flex items-center gap-2 normal-case">
                   <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                   Recent System Errors
                 </h3>
@@ -294,15 +314,15 @@ const Admin = () => {
                       <th className="px-8 py-5 text-right">Time</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-gray-50 normal-case">
                     {errorLogs.map((log) => (
                       <tr key={log.id} className="hover:bg-red-50/30 transition-colors">
                         <td className="px-8 py-6">
                           <p className="text-red-700 font-medium text-sm mb-1">{log.message}</p>
-                          <p className="text-[10px] text-gray-400 font-mono">Code: {log.code}</p>
+                          <p className="text-[10px] text-gray-400 font-mono tracking-tighter uppercase">Code: {log.code}</p>
                         </td>
                         <td className="px-8 py-6">
-                          <p className="text-xs text-gray-500">{log.context?.component} • {log.context?.action}</p>
+                          <p className="text-xs text-gray-500 uppercase tracking-tight">{log.context?.component} • {log.context?.action}</p>
                           <p className="text-[10px] text-gray-400">Guest: {log.context?.guestName || 'Unknown'}</p>
                         </td>
                         <td className="px-8 py-6 text-right text-xs text-gray-400 italic">

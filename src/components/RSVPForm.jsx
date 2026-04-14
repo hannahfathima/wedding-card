@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { logError } from '../utils/logger';
 
-const RSVPForm = ({ onCancel }) => {
+const RSVPForm = ({ onCancel, selectedSide }) => {
   const [name, setName] = useState('');
   const [attending, setAttending] = useState(null); // null, true, false
   const [people, setPeople] = useState(1);
@@ -24,6 +24,7 @@ const RSVPForm = ({ onCancel }) => {
       name: name.trim() || 'Anonymous Guest',
       attending: attending,
       people: attending ? parseInt(people) : 0,
+      side: selectedSide,
       createdAt: serverTimestamp(),
       source: 'web_invitation'
     };
