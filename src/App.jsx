@@ -6,7 +6,7 @@ import Admin from './components/Admin';
 function App() {
   return (
     <Router 
-      basename="/wedding-card"
+      basename="/"
       future={{ 
         v7_startTransition: true, 
         v7_relativeSplatPath: true 
