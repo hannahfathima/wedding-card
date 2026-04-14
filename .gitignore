@@ -1,0 +1,15 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+
+# Firebase keys (Private)
+*.json
+!package.json
+!package-lock.json
+
+# Redundant modules
+node_modules_old
+node_modules_trash
+node_modules_2
