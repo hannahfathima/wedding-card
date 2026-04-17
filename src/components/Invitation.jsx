@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, Sparkles } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import RSVPForm from './RSVPForm';
 
 const CountdownTimer = ({ targetDate }) => {
@@ -63,7 +64,13 @@ const SIDE_CONFIG = {
 };
 
 const Invitation = () => {
-  const [selectedSide, setSelectedSide] = useState(null); // 'hanna' or 'rishad'
+  const [searchParams] = useSearchParams();
+  const sideParam = searchParams.get('side');
+  
+  const [selectedSide, setSelectedSide] = useState(() => {
+    if (sideParam === 'hanna' || sideParam === 'rishad') return sideParam;
+    return null;
+  });
   const [showRSVP, setShowRSVP] = useState(false);
 
   const config = selectedSide ? SIDE_CONFIG[selectedSide] : null;

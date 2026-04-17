@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { Users, ClipboardList, Lock, LogOut, Search, CheckCircle, XCircle } from 'lucide-react';
+import { Users, ClipboardList, Lock, LogOut, Search, CheckCircle, XCircle, Filter } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 
 const Admin = () => {
   const [password, setPassword] = useState('');
@@ -14,6 +15,13 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('guests'); // 'guests', 'logs'
   const [errorLogs, setErrorLogs] = useState([]);
   const [logsLoading, setLogsLoading] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const sideParam = searchParams.get('side');
+  const [sideFilter, setSideFilter] = useState(() => {
+    if (sideParam === 'hanna' || sideParam === 'rishad') return sideParam;
+    return 'all';
+  });
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -66,9 +74,11 @@ const Admin = () => {
     return () => unsubscribe();
   }, [isAuthenticated, activeTab]);
 
-  const filteredRsvps = rsvps.filter(rsvp => 
-    rsvp.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredRsvps = rsvps.filter(rsvp => {
+    const matchesSearch = rsvp.name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSide = sideFilter === 'all' || rsvp.side === sideFilter;
+    return matchesSearch && matchesSide;
+  });
 
   const totalPeople = rsvps.reduce((sum, item) => sum + (item.attending ? (item.people || 0) : 0), 0);
   const totalHanna = rsvps.reduce((sum, item) => sum + (item.attending && item.side === 'hanna' ? (item.people || 0) : 0), 0);
@@ -205,8 +215,8 @@ const Admin = () => {
         {activeTab === 'guests' ? (
           <>
             {/* Entries Control */}
-            <div className="pinterest-card !p-6 mb-8 flex flex-col md:flex-row gap-4 items-center">
-              <div className="relative w-full md:w-96">
+            <div className="pinterest-card !p-6 mb-8 flex flex-col md:flex-row gap-6 items-center">
+              <div className="relative w-full md:w-80">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 w-4 h-4" />
                 <input 
                   type="text"
@@ -216,7 +226,28 @@ const Admin = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
+
+              <div className="flex bg-gray-50 rounded-full p-1 border border-gray-100 min-w-fit">
+                {['all', 'hanna', 'rishad'].map((side) => (
+                  <button
+                    key={side}
+                    onClick={() => setSideFilter(side)}
+                    className={`px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${
+                      sideFilter === side 
+                      ? 'bg-white shadow-sm text-pinterest-charcoal' 
+                      : 'text-gray-400 hover:text-pinterest-charcoal'
+                    }`}
+                  >
+                    {side === 'all' ? 'All' : side === 'hanna' ? 'Hanna' : 'Rishad'}
+                  </button>
+                ))}
+              </div>
+
               <div className="ml-auto flex gap-6 text-right">
+                <div>
+                  <p className="text-[8px] uppercase tracking-widest text-gray-400">Filtered Count</p>
+                  <p className="text-xl font-serif italic text-pinterest-gold">{filteredRsvps.length}</p>
+                </div>
                 <div>
                   <p className="text-[8px] uppercase tracking-widest text-gray-400">Response Rate</p>
                   <p className="text-xl font-serif italic">{totalResponses ? Math.round((totalAttending/totalResponses)*100) : 0}%</p>
