@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import confetti from 'canvas-confetti';
@@ -14,6 +14,33 @@ const RSVPForm = ({ onCancel, selectedSide }) => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+
+  const playCelebrationMusic = () => {
+    // Try multiple sources in case one is blocked or fails
+    const sources = [
+      '/WhatsApp Audio 2026-04-17 at 12.38.55 PM.aac'
+    ];
+
+    const playWithFallback = (index) => {
+      if (index >= sources.length) {
+        console.error("All audio sources failed to load.");
+        return;
+      }
+
+      const audio = new Audio(sources[index]);
+      audio.volume = 0.5;
+      
+      console.log(`Attempting to play audio source ${index + 1}...`);
+      audio.play()
+        .then(() => console.log(`Successfully playing source ${index + 1}`))
+        .catch(err => {
+          console.warn(`Audio source ${index + 1} failed:`, err);
+          playWithFallback(index + 1);
+        });
+    };
+
+    playWithFallback(0);
+  };
 
   const handleSubmit = async (e) => {
     e?.preventDefault();
@@ -37,6 +64,9 @@ const RSVPForm = ({ onCancel, selectedSide }) => {
 
       setSubmitted(true);
       if (attending) {
+        // Play wedding song
+        playCelebrationMusic();
+
         console.log('Attending: true - Triggering celebration');
         const duration = 5 * 1000;
         const animationEnd = Date.now() + duration;
